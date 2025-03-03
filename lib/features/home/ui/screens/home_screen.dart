@@ -10,7 +10,8 @@ import 'package:ecommerce/features/home/ui/widgets/app_bar_icon_button.dart';
 import 'package:ecommerce/features/common/ui/widgets/category_item_widget.dart';
 import 'package:ecommerce/features/home/ui/widgets/home_carousel_slider.dart';
 import 'package:ecommerce/features/home/ui/widgets/home_section_header.dart';
-import 'package:ecommerce/features/common/ui/widgets/product_item_widget.dart';
+import 'package:ecommerce/features/common/ui/widgets/product_list_shimmer_loading.dart';
+import 'package:ecommerce/features/home/ui/widgets/product_card_widget.dart';
 import 'package:ecommerce/features/home/ui/widgets/product_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,24 +39,20 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               const SizedBox(height: 16),
-              ProductSearchBar(
-                controller: _searchBarController,
-              ),
+              ProductSearchBar(controller: _searchBarController),
               const SizedBox(height: 16),
-              GetBuilder<SliderListController>(
-                builder: (controller) {
-                  if (controller.inProgress) {
-                    return const SizedBox(
-                      height: 180,
-                      child: CenteredCircularProgressIndicator(),
-                    );
-                  }
-                  return HomeCarouselSlider(
-                    sliderList: controller.bannerList,
+              // Carousel Slider Section
+              GetBuilder<SliderListController>(builder: (controller) {
+                if (controller.inProgress) {
+                  return const SizedBox(
+                    height: 180,
+                    child: CenteredCircularProgressIndicator(),
                   );
-                },
-              ),
+                }
+                return HomeCarouselSlider(sliderList: controller.bannerList);
+              }),
               const SizedBox(height: 16),
+              // Category Section
               HomeSectionHeader(
                 title: 'Category',
                 onTap: () {
@@ -73,15 +70,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    // children: _getCategoryList(controller.categoryList),
+                    children: _getCategoryList(controller.categoryList),
                   ),
                 );
               }),
               const SizedBox(height: 16),
-              HomeSectionHeader(
-                title: 'Popular',
-                onTap: () {},
-              ),
+              // Popular Products Section
+              HomeSectionHeader(title: 'Popular', onTap: () {}),
               const SizedBox(height: 8),
               GetBuilder<PopularProductListController>(builder: (controller) {
                 if (controller.inProgress) {
@@ -90,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: CenteredCircularProgressIndicator(),
                   );
                 }
-
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -99,27 +93,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }),
               const SizedBox(height: 16),
-              HomeSectionHeader(
-                title: 'Special',
-                onTap: () {},
-              ),
+              // Special Products Section (currently empty or placeholder)
+              HomeSectionHeader(title: 'Special', onTap: () {}),
               const SizedBox(height: 8),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: _getProductList([]),
+                  children: _getProductList([]), // Placeholder for empty list
                 ),
               ),
               const SizedBox(height: 16),
-              HomeSectionHeader(
-                title: 'New',
-                onTap: () {},
-              ),
+              // New Products Section (currently empty or placeholder)
+              HomeSectionHeader(title: 'New', onTap: () {}),
               const SizedBox(height: 8),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: _getProductList([]),
+                  children: _getProductList([]), // Placeholder for empty list
                 ),
               ),
             ],
@@ -129,36 +119,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Helper method to generate category list widgets
   List<Widget> _getCategoryList(List<CategoryModel> categoryModels) {
-    List<Widget> categoryList = [];
-    for (int i = 0; i < categoryModels.length; i++) {
-      // categoryList.add(
-      //   Padding(
-      //     padding: const EdgeInsets.only(right: 16),
-      //     child: CategoryItemWidget(
-      //       categoryModel: categoryModels[i],
-      //     ),
-      //   ),
-      // );
-    }
-    return categoryList;
-  }
-
-  List<Widget> _getProductList(List<ProductModel> productList) {
-    List<Widget> list = [];
-    for (int i = 0; i < productList.length; i++) {
-      list.add(
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: ProductItemWidget(
-            productModel: productList[i],
-          ),
-        ),
+    return categoryModels.map((category) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 16),
+        child: CategoryItemWidget(categoryModel: category),
       );
-    }
-    return list;
+    }).toList();
   }
 
+  // Helper method to generate product card widgets
+  List<Widget> _getProductList(List<ProductModel> productList) {
+    return productList.map((product) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 16),
+        child: ProductCardWidget(productModel: product),
+      );
+    }).toList();
+  }
+
+  // AppBar for the home screen
   AppBar _buildAppBar() {
     return AppBar(
       title: SvgPicture.asset(AssetsPath.navBarAppLogoSvg),

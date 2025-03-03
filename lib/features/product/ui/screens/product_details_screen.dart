@@ -1,197 +1,206 @@
+
 import 'package:ecommerce/app/app_colors.dart';
+import 'package:ecommerce/features/auth/ui/screens/sign_up_screen.dart';
+import 'package:ecommerce/features/cart/ui/screens/cart_list_screen.dart';
+import 'package:ecommerce/features/common/data/models/product_pagination_model/product_pagination_model.dart';
+import 'package:ecommerce/features/common/ui/controllers/auth_controller.dart';
 import 'package:ecommerce/features/common/ui/widgets/centered_circular_progress_indicator.dart';
-import 'package:ecommerce/features/product/data/models/product_details_model.dart';
-import 'package:ecommerce/features/product/ui/controllers/product_details_controller.dart';
-import 'package:ecommerce/features/product/ui/widgets/color_picker_widget.dart';
-import 'package:ecommerce/features/product/ui/widgets/product_image_carousel_slider.dart';
-import 'package:ecommerce/features/common/ui/widgets/product_quantity_inc_dec_button.dart';
-import 'package:ecommerce/features/product/ui/widgets/size_picker_widget.dart';
+import 'package:ecommerce/features/common/ui/widgets/product_quantity_stepper_widget.dart';
+import 'package:ecommerce/features/common/ui/widgets/snack_bar_message.dart';
+import 'package:ecommerce/features/product/ui/controller/add_to_cart_controller.dart';
+import 'package:ecommerce/features/product/ui/controller/product_id_controller.dart';
+import 'package:ecommerce/features/product/widgets/color_picker_widget.dart';
+import 'package:ecommerce/features/product/widgets/product_image_carousel_slider_widget.dart';
+import 'package:ecommerce/features/product/widgets/review_section_widget.dart';
+import 'package:ecommerce/features/product/widgets/size_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+
 class ProductDetailsScreen extends StatefulWidget {
-  const ProductDetailsScreen({super.key, required this.productId});
-
-  final int productId;
-
-  static const String name = '/product/product-details';
+  static const String name = "/product/product-details";
+  const ProductDetailsScreen({
+    super.key,
+    required this.productList,
+  });
+  final ProductItemModel productList;
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Get.find<ProductDetailsController>().getProductDetails(widget.productId);
-  }
+  final List<Color> _colors = [
+    Colors.black87,
+    Colors.blueAccent,
+    Colors.blueGrey,
+    Colors.green,
+    Colors.orange
+  ];
+  final List<String> _sizes = [
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL",
+  ];
+
+  final AddToCartController _addToCart = Get.find<AddToCartController>();
+  final AuthController _auth = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Details'),
+        title: const Text("Product Details"),
+        leading: IconButton(
+            onPressed: _onPop,
+            icon: const Icon(Icons.arrow_back_ios)),
+        bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(2.0),
+            child: Container(
+              height: 2,
+              color: Colors.grey.shade200,)),
       ),
-      body: GetBuilder<ProductDetailsController>(builder: (controller) {
-        if (controller.inProgress) {
-          return const CenteredCircularProgressIndicator();
-        }
-
-        if (controller.errorMessage != null) {
-          return Center(
-            child: Text(controller.errorMessage!),
-          );
-        }
-
-        ProductDetails productDetails = controller.productDetails!;
-
-        return Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ProductImageCarouselSlider(
-                      imageUrls: [
-                        productDetails.img1!,
-                        productDetails.img2!,
-                        productDetails.img3!,
-                        productDetails.img4!,
+      body: Column(
+            children: [
+              ProductImageCarouselSliderWidget(
+                imageUrls: widget.productList.photos ?? [],
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 16,
+                      top: 16,
+                      right: 16,
+                      bottom: 0,),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(widget.productList.title ?? "",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 22,
+                                        color: AppColors.themeColor
+                                      )),
+                                  ReviewSectionWidget(productId: widget.productList.sId.toString(),)
+                                ],
+                              ),
+                            ),
+                            ProductQuantityStepperWidget(onChange: (int value) {},)
+                          ],
+                        ),
+                        Text("Color", style: TextTheme.of(context).titleMedium?.copyWith(fontSize: 20),),
+                        const SizedBox(height: 8,),
+                        ColorPickerWidget(colors: _colors,),
+                        const SizedBox(height: 16,),
+                        Text("Size", style: TextTheme.of(context).titleMedium?.copyWith(fontSize: 20),),
+                        const SizedBox(height: 8,),
+                        SizePickerWidget(sizes: _sizes),
+                        const SizedBox(height: 16,),
+                        Text("Description", style: TextTheme.of(context).titleMedium?.copyWith(fontSize: 20),),
+                        const SizedBox(height: 8,),
+                        Text(widget.productList.description ?? "",
+                          style: TextTheme.of(context).bodyLarge,
+                        )
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      productDetails.product?.title ?? '',
-                                      textAlign: TextAlign.start,
-                                      style: textTheme.titleMedium,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.star,
-                                              color: Colors.amber,
-                                              size: 18,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              '${productDetails.product?.star ?? ''}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        TextButton(
-                                          onPressed: () {},
-                                          child: const Text('Reviews'),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                              color: AppColors.themeColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(4)),
-                                          child: const Icon(
-                                            Icons.favorite_border,
-                                            size: 14,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              ProductQuantityIncDecButton(
-                                onChange: (int value) {},
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text('Color', style: textTheme.titleMedium),
-                          const SizedBox(height: 8),
-                          ColorPickerWidget(
-                            colors: productDetails.color?.split(',') ?? [],
-                            onColorSelected: (String selectedColor) {},
-                          ),
-                          const SizedBox(height: 16),
-                          Text('Size', style: textTheme.titleMedium),
-                          const SizedBox(height: 8),
-                          SizePickerWidget(
-                            sizes: productDetails.size?.split(',') ?? [],
-                            onSizeSelected: (String selectedSize) {},
-                          ),
-                          const SizedBox(height: 16),
-                          Text('Description', style: textTheme.titleMedium),
-                          const SizedBox(height: 8),
-                          Text(
-                            productDetails.des ?? '',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-            _buildPriceAndAddToCartSection(
-                textTheme, productDetails.product?.price ?? '0.0')
-          ],
-        );
-      }),
+              buildAddToCartContainer(context, widget.productList.currentPrice.toString())
+            ]
+      )
     );
   }
 
-  Widget _buildPriceAndAddToCartSection(TextTheme textTheme, String price) {
+  Widget buildAddToCartContainer(BuildContext context, String price) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: AppColors.themeColor.withOpacity(0.15)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          height: 80,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: AppColors.themeColor.withValues(alpha: 0.1),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Price', style: textTheme.titleSmall),
-              Text(
-                '\$$price',
-                style: const TextStyle(
+               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Price", style: TextTheme.of(context).titleMedium,),
+                  Text("\$$price", style: const TextStyle(
                     color: AppColors.themeColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18),
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700
+                  ),),
+                ],
               ),
+              SizedBox(
+                width: 120,
+                child: GetBuilder<AddToCartController>(
+                  builder: (controller) {
+                    if(controller.inProgress){
+                      return const CenteredCircularProgressIndicator();
+                    }
+                    return ElevatedButton(
+                        onPressed: (){
+                          _addToCartMethod();
+                        },
+                        child: const Text("Add to Cart", style: TextStyle(color: Colors.white),));
+                  }
+                ),
+              )
             ],
           ),
-          SizedBox(
-            width: 120,
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text('Add to Cart'),
-            ),
-          )
-        ],
-      ),
-    );
+        );
+  }
+
+  Future<void> _addToCartMethod()async {
+    String productId = widget.productList.sId.toString(); // Your product ID
+    Get.find<ProductIdController>().setProductId(productId);
+
+    bool loggedIn = await _auth.isUserLoggedIn();
+    if(loggedIn){
+      String token = _auth.accessToken!;
+      debugPrint("TOKEN: $token");
+      final bool result = await _addToCart.postAddToCart(widget.productList.sId.toString(), token);
+      if(result && mounted){
+        _onTapCartScreen();
+      }else{
+        if(mounted){
+          showSnackBarMessage(context, _addToCart.errorMessage ?? "Something went wrong, Please try again", false);
+        }
+      }
+    }else{
+      if(mounted){
+        Navigator.pushNamedAndRemoveUntil (context, SignUpScreen.name, (predicate)=>false);
+      }
+    }
+  }
+
+  void _onTapCartScreen(){
+    Navigator.pushNamed(context, CartListScreen.name);
+    // Get.find<MainBottomNavController>().changeIndex(2);
+  }
+
+  void _onPop(){
+    Navigator.pop(context);
   }
 }
+
+

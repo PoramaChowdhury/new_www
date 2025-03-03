@@ -8,25 +8,36 @@ class ProductDetailsController extends GetxController {
 
   bool get inProgress => _inProgress;
 
-  ProductDetailsModel? _productDetailsModel;
-
-  ProductDetails? get productDetails => _productDetailsModel?.data!.first;
-
   String? _errorMessage;
 
   String? get errorMessage => _errorMessage;
 
-  Future<bool> getProductDetails(int productId) async {
+  ProductDetailsModel? _productDetailsModel;
+
+  ProductDetails? get productDetails {
+    if (_productDetailsModel?.data != null &&
+        _productDetailsModel!.data!.isNotEmpty) {
+      return _productDetailsModel?.data?.first;
+    }
+    return null;
+  }
+
+  Future<bool> getProductDetails(String id) async {
     bool isSuccess = false;
     _inProgress = true;
     update();
-    final NetworkResponse response = await Get.find<NetworkCaller>()
-        .getRequest(Urls.productDetailsUrl(productId));
+
+    final NetworkResponse response = await Get.find<NetworkCaller>().getRequest(
+      Urls.productDetails,
+    );
+
     if (response.isSuccess) {
+      isSuccess = true;
       _productDetailsModel =
           ProductDetailsModel.fromJson(response.responseData);
-      isSuccess = true;
+      _errorMessage = null;
     } else {
+      isSuccess = false;
       _errorMessage = response.errorMessage;
     }
     _inProgress = false;

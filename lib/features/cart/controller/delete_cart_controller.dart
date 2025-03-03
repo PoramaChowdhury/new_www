@@ -36,20 +36,23 @@ import 'package:get/get.dart';
 class DeleteCartController extends GetxController {
   bool _inProgress = false;
   bool get inProgress => _inProgress;
+
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
+
   final String? _token = Get.find<AuthController>().accessToken;
 
-  // For deleteCartItem functionality
+  // To track which item is currently being deleted
   String? _currentDeletingId;
   bool isDeleting(String cartItemId) => _currentDeletingId == cartItemId;
 
+  // Deleting the entire cart
   Future<bool> deleteCart(String cartId) async {
     bool isSuccess = false;
     _inProgress = true;
     update();
 
-    NetworkResponse response = await Get.find<NetworkCaller>().delRequest(
+    final NetworkResponse response = await Get.find<NetworkCaller>().deleteRequest(
       Urls.cartDeleteUrl(cartId),
       accessToken: _token,
     );
@@ -65,9 +68,11 @@ class DeleteCartController extends GetxController {
     return isSuccess;
   }
 
-  // Adding the deleteCartItem functionality
+  // Deleting individual cart item
   Future<bool> deleteCartItem(String productId) async {
     bool isSuccess = false;
+
+    // Track which item is being deleted
     _currentDeletingId = productId;
     _inProgress = true;
     update();
@@ -79,15 +84,15 @@ class DeleteCartController extends GetxController {
 
     if (response.isSuccess) {
       isSuccess = true;
-      _errorMessage = null;
+      _errorMessage = null; // Reset any previous error message
     } else {
-      isSuccess = false;
       _errorMessage = response.errorMessage;
     }
 
     _inProgress = false;
-    _currentDeletingId = null;
+    _currentDeletingId = null; // Reset deleting state
     update();
+
     return isSuccess;
   }
 }

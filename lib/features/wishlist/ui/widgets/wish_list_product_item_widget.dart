@@ -1,111 +1,133 @@
 import 'package:ecommerce/app/app_colors.dart';
-import 'package:ecommerce/app/assets_path.dart';
+import 'package:ecommerce/features/auth/ui/screens/sign_up_screen.dart';
+import 'package:ecommerce/features/common/ui/controllers/auth_controller.dart';
+import 'package:ecommerce/features/common/ui/widgets/snack_bar_message.dart';
 import 'package:ecommerce/features/product/ui/screens/product_details_screen.dart';
+import 'package:ecommerce/features/wishlist/data/models/wishlist_item_list_data_model.dart';
+import 'package:ecommerce/features/wishlist/ui/controllers/delete_wishlist_item_controller.dart';
+import 'package:ecommerce/features/wishlist/ui/controllers/wishlist_item_list_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class WishListProductItemWidget extends StatelessWidget {
-  const WishListProductItemWidget({
+class WishlistProductCardWidget extends StatefulWidget {
+  const WishlistProductCardWidget({
     super.key,
-    required this.tittle,
-    required this.rating,
-    required this.price,
+    required this.wishlistItem,
   });
-  final String tittle;
-  final int price;
-  final double rating;
+
+  final WishlistItemModel wishlistItem;
+
+  @override
+  State<WishlistProductCardWidget> createState() => _WishlistProductCardWidgetState();
+}
+
+class _WishlistProductCardWidgetState extends State<WishlistProductCardWidget> {
+  final AuthController _auth = Get.find<AuthController>();
+  final WishlistItemListController _wishlistILController = Get.find<WishlistItemListController>();
+  final DeleteWishlistItemController _deleteWishlistController = Get.find<DeleteWishlistItemController>();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, ProductDetailsScreen.name, arguments: 1);
+      onTap: (){
+        Navigator.pushNamed(context, ProductDetailsScreen.name,
+            arguments: {
+              "productList": widget.wishlistItem
+            }
+        );
       },
       child: SizedBox(
-        width: 150,
-
-
+        width: 180,
         child: Card(
-            color: Colors.white,
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: AppColors.themeColor.withOpacity(0.44),
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8))),
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    AssetsPath.dummyImagePng,
-                    fit: BoxFit.cover,
-
-                  ),
+          elevation: 5,
+          shadowColor: Colors.black.withValues(alpha: 0.3),
+          color: Colors.white,
+          child: Column(
+            children: [
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    color: AppColors.themeColor.withValues(alpha: 0.2),
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8)
+                    )
                 ),
-                Column(
+                child: Image.network(
+                  (widget.wishlistItem.product?.photos?.isNotEmpty ?? false)
+                      ? widget.wishlistItem.product!.photos!.first
+                      : "https://fastly.picsum.photos/id/21/3008/2008.jpg?hmac=T8DSVNvP-QldCew7WD4jj_S3mWwxZPqdF0CNPksSko4",
+                  fit: BoxFit.cover,
+                  width: 180,
+                  height: 100,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        tittle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Colors.black54, fontWeight: FontWeight.bold),
+                    Text(widget.wishlistItem.product?.title ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(2),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            '\$$price',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.themeColor),
+                    Row(
+                      children: [
+                        Text("\$${widget.wishlistItem.product?.currentPrice ?? ""}",
+                          style: const TextStyle(
+                              color: AppColors.themeColor,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18
                           ),
-                          SizedBox(
-                            width: 6,
-                          ),
-                          Wrap(
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 18,
-                              ),
-                              Text(
-                                '$rating',
-                                style: TextStyle(fontWeight: FontWeight.w400),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          GestureDetector(
-                            onTap: (){},
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.themeColor
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Icon(
-                                    Icons.delete_outline,
-                                    size: 15,
-                                    color: Colors.white,
-                                  ),
-                                )),
-                          )
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: 6,),
+                        Wrap(
+                          children: [
+                            const Icon(Icons.star_rounded, color: Colors.amber, size: 22,),
+                            Text("${widget.wishlistItem.product?.quantity ?? ""}",
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),),
+                          ],
+                        ),
+                        IconButton(
+                            onPressed: _deleteWishlistItem,
+                            icon: const Icon(Icons.delete_rounded, color: AppColors.themeColor, size: 24,)
+                        ),
+                      ],
                     )
                   ],
-                )
-              ],
-            )),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  Future<void> _deleteWishlistItem()async {
+    bool loggedIn = await _auth.isUserLoggedIn();
+    if(loggedIn){
+      String productId = widget.wishlistItem.sId ?? "";
+      String token = _auth.accessToken ?? "";
+      bool result = await _deleteWishlistController.deleteWishlistItem(token, productId);
+      if(result && mounted){
+        _wishlistILController.getWishlistItemList(token);
+        showSnackBarMessage(context, "Cart item removed successfully");
+      }else{
+        if(mounted){
+          showSnackBarMessage(context, _deleteWishlistController.errorMessage ?? "Something went wrong", false);
+        }
+      }
+    }else{
+      if(mounted){
+        Navigator.pushNamed(context, SignUpScreen.name);
+      }
+    }
   }
 }

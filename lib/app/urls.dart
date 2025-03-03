@@ -23,4 +23,13 @@ class Urls {
 
   static String productDetailsUrl(int productId) =>
       '$_baseUrl/ProductDetailsById/$productId';
+
+  static String productDetails= "$_baseUrl/products/id/";
+  static String wishlistUrl = "$_baseUrl/wishlist";
+  static String addToCartUrl = "$_baseUrl/cart";
+  static String deleteWishlistItemUrl(String productId) => "$_baseUrl/wishlist/$productId";
+  static String reviewsUrl = "$_baseUrl/reviews";
+  static String productListByRemarksList = "$_baseUrl/products";
+
+
 }

@@ -23,7 +23,7 @@ class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
     HomeScreen(),
     CategoryListScreen(),
     CartListScreen(),
-    WishListScreen(),
+    WishlistScreen(),
   ];
 
   @override

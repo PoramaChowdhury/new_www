@@ -8,7 +8,7 @@ import 'package:ecommerce/features/common/ui/controllers/product_list_controller
 import 'package:ecommerce/features/home/ui/controllers/popular_product_list_controller.dart';
 import 'package:ecommerce/features/home/ui/controllers/product_list_by_remark_controller.dart';
 import 'package:ecommerce/features/home/ui/controllers/slider_list_controller.dart';
-import 'package:ecommerce/features/product/ui/controllers/product_details_controller.dart';
+import 'package:ecommerce/features/product/ui/controller/product_details_controller.dart';
 import 'package:ecommerce/services/network_caller/network_caller.dart';
 import 'package:get/get.dart';
 
