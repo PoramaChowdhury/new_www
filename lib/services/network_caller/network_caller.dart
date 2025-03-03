@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecommerce/features/common/data/models/error_response_model.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class NetworkResponse {
@@ -54,6 +55,38 @@ class NetworkCaller {
       return NetworkResponse(
           isSuccess: false, statusCode: -1, errorMessage: e.toString());
     }
+  }Future<NetworkResponse> delRequest(String url, {String? accessToken}) async {
+    try {
+      Map<String, String> headers = {
+        'content-type': 'application/json',
+      };
+
+      if (accessToken != null) {
+        headers['token'] = accessToken;
+      }
+
+      _logRequest(url);
+
+      Uri uri = Uri.parse(url);
+      http.Response response = await http.delete(uri, headers: headers);
+
+      _logResponse(url, response.statusCode, response.headers, response.body);
+
+      if (response.statusCode == 200) {
+        final decodedMessage = jsonDecode(response.body);
+        return NetworkResponse(
+            isSuccess: true,
+            statusCode: response.statusCode,
+            responseData: decodedMessage);
+      } else {
+        return NetworkResponse(
+            isSuccess: false, statusCode: response.statusCode);
+      }
+    } catch (e) {
+      _logResponse(url, -1, {}, '', e.toString());
+      return NetworkResponse(
+          isSuccess: false, statusCode: -1, errorMessage: e.toString());
+    }
   }
 
   Future<NetworkResponse> postRequest(String url,
@@ -89,6 +122,39 @@ class NetworkCaller {
           isSuccess: false, statusCode: -1, errorMessage: e.toString());
     }
   }
+
+  Future<NetworkResponse> patchRequest(String url, {Map<String, dynamic>? body, String? accessToken}) async {
+    try {
+      Map<String, String> headers = {
+        'content-type': 'application/json',
+      };
+      if (accessToken != null) {
+        headers['token'] = accessToken;
+      }
+
+      _logRequest(url, headers, body);
+
+      Uri uri = Uri.parse(url);
+      http.Response response = await patch(uri, headers: headers, body: jsonEncode(body));
+      _logResponse(url, response.statusCode, response.headers, response.body);
+
+      if (response.statusCode == 200) {
+        final decodedMessage = jsonDecode(response.body);
+        return NetworkResponse(
+            isSuccess: true,
+            statusCode: response.statusCode,
+            responseData: decodedMessage);
+      } else {
+        return NetworkResponse(
+            isSuccess: false, statusCode: response.statusCode);
+      }
+    } catch (e) {
+      _logResponse(url, -1, null, '', e.toString());
+      return NetworkResponse(
+          isSuccess: false, statusCode: -1, errorMessage: e.toString());
+    }
+  }
+
 
   void _logRequest(String url,
       [Map<String, dynamic>? headers, Map<String, dynamic>? body]) {

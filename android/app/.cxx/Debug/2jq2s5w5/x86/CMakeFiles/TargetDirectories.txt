@@ -1,0 +1,2 @@
+C:/Users/Qbits/StudioProjects/r_ecommerce/android/app/.cxx/Debug/2jq2s5w5/x86/CMakeFiles/edit_cache.dir
+C:/Users/Qbits/StudioProjects/r_ecommerce/android/app/.cxx/Debug/2jq2s5w5/x86/CMakeFiles/rebuild_cache.dir

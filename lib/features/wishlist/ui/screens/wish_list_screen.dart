@@ -1,11 +1,11 @@
 import 'package:ecommerce/features/common/ui/controllers/main_bottom_nav_controller.dart';
-import 'package:ecommerce/features/common/ui/widgets/product_item_widget.dart';
+import 'package:ecommerce/features/wishlist/ui/widgets/wish_list_product_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class WishListScreen extends StatefulWidget {
   const WishListScreen({super.key});
-
+  static String name = '/wish-list';
   @override
   State<WishListScreen> createState() => _WishListScreenState();
 }
@@ -16,33 +16,29 @@ class _WishListScreenState extends State<WishListScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (_, __) {
-        _onPop();
+        Get.find<MainBottomNavController>().backToHome();
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Wishlist'),
+          title: Text('Wish List'),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: _onPop,
-          ),
+              onPressed: () {
+                Get.find<MainBottomNavController>().backToHome();
+              },
+              icon: const Icon(Icons.arrow_back_ios)),
         ),
         body: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 0.8,
-            crossAxisSpacing: 2,
-            mainAxisSpacing: 4,
-          ),
-          itemCount: 20,
-          itemBuilder: (context, index) {
-            // return const FittedBox(child: ProductItemWidget());
-          },
-        ),
+            itemCount: 20,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, mainAxisSpacing: 16),
+            itemBuilder: (context, index) {
+              return const FittedBox(
+                  child: WishListProductItemWidget(
+                      tittle: 'New Year Special Shoe 3D',
+                      rating: 4.5,
+                      price: 100));
+            }),
       ),
     );
-  }
-
-  void _onPop() {
-    Get.find<MainBottomNavController>().backToHome();
   }
 }
