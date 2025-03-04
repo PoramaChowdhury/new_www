@@ -22,7 +22,7 @@ class SliderListController extends GetxController {
     _inProgress = true;
     update();
     final NetworkResponse response =
-        await Get.find<NetworkCaller>().getRequest(Urls.homeSliderUrl);
+        await Get.find<NetworkCaller>().getRequest(Urls.homeBannerSliders);
     if (response.isSuccess) {
       _sliderPaginationModel =
           SliderPaginationModel.fromJson(response.responseData);

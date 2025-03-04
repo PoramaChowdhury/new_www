@@ -39,7 +39,7 @@ class CategoryListController extends GetxController {
     };
 
     final NetworkResponse response = await Get.find<NetworkCaller>().getRequest(
-      Urls.categoryListUrl,
+      Urls.categoryList,
       queryParams: queryParams,
     );
 

@@ -4,8 +4,6 @@ import 'package:ecommerce/features/common/data/models/product_model.dart';
 import 'package:ecommerce/services/network_caller/network_caller.dart';
 import 'package:get/get.dart';
 
-/// DONOT WRITE CODE LIKE THIS
-/// EXAMPLE OF BAD CODE
 class ProductListByRemarkController extends GetxController {
   bool _popularProductInProgress = false;
   bool _specialProductInProgress = false;
@@ -51,7 +49,7 @@ class ProductListByRemarkController extends GetxController {
     }
     update();
     final NetworkResponse response = await Get.find<NetworkCaller>()
-        .getRequest(Urls.productListByRemarkUrl(remark));
+        .getRequest(Urls.productListByRemarksList);
     if (response.isSuccess) {
       if (remark == 'popular') {
         _popularProductListModel =

@@ -1,35 +1,22 @@
-class Urls {
-  static const String _baseUrl = 'https://ecom-rs8e.onrender.com/api';
-  static const String signInUrl = '$_baseUrl/auth/login';
-  static const String signUpUrl = '$_baseUrl/auth/signup';
+class Urls{
 
-  static String verifyOtpUrl = '$_baseUrl/auth/verify-otp';
-  static String homeSliderUrl = '$_baseUrl/slides';
+  static const String _baseUrl = "https://ecom-rs8e.onrender.com/api";
 
-  static String readProfile = '$_baseUrl/ReadProfile';
-  static String bannerListUrl = '$_baseUrl/ListProductSlider';
-  static String categoryListUrl = '$_baseUrl/categories';
-  static String cartDeleteUrl(String cartId) => '$_baseUrl/cart/$cartId';
-  static String cartListUrl ='$_baseUrl/cart';
-  static String profileUrl = '$_baseUrl/auth/profile';
-
-  static String deleteCartItemUrl(String productId) => "$_baseUrl/cart/$productId";
-
-  static String productListByRemarkUrl(String remark) =>
-      '$_baseUrl/ListProductByRemark/$remark';
-
-  static String productListByCategoryUrl(int categoryId) =>
-      '$_baseUrl/ListProductByCategory/$categoryId';
-
-  static String productDetailsUrl(int productId) =>
-      '$_baseUrl/ProductDetailsById/$productId';
-
-  static String productDetails= "$_baseUrl/products/id/";
-  static String wishlistUrl = "$_baseUrl/wishlist";
-  static String addToCartUrl = "$_baseUrl/cart";
-  static String deleteWishlistItemUrl(String productId) => "$_baseUrl/wishlist/$productId";
-  static String reviewsUrl = "$_baseUrl/reviews";
+  static String signInUrl = "$_baseUrl/auth/login";
+  static String verifyOtpUrl = "$_baseUrl/auth/verify-otp";
+  static String readProfile = "$_baseUrl/ReadProfile";
+  static String signUpUrl = "$_baseUrl/auth/signup";
+  static String homeBannerSliders = "$_baseUrl/slides";
+  static String categoryList = "$_baseUrl/categories";
+  static String productListByCategory(int categoryId) => "$_baseUrl/ListProductByCategory/$categoryId";
   static String productListByRemarksList = "$_baseUrl/products";
-
+  static String productDetails= "$_baseUrl/products/id/";
+  static String reviewsUrl = "$_baseUrl/reviews";
+  static String addToCartUrl = "$_baseUrl/cart";
+  static String cartListUrl = "$_baseUrl/cart";
+  static String wishlistUrl = "$_baseUrl/wishlist";
+  static String createOrderUrl = "$_baseUrl/order";
+  static String deleteCartItemUrl(String productId) => "$_baseUrl/cart/$productId";
+  static String deleteWishlistItemUrl(String productId) => "$_baseUrl/wishlist/$productId";
 
 }
