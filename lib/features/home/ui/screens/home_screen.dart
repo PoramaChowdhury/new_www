@@ -1,6 +1,6 @@
 import 'package:ecommerce/app/assets_path.dart';
-import 'package:ecommerce/features/common/data/models/category_model.dart';
-import 'package:ecommerce/features/common/data/models/product_model.dart';
+import 'package:ecommerce/features/common/data/models/category/category_pagination_model.dart';
+import 'package:ecommerce/features/common/data/models/product_pagination_model/product_pagination_model.dart';
 import 'package:ecommerce/features/common/ui/controllers/category_list_controller.dart';
 import 'package:ecommerce/features/common/ui/controllers/main_bottom_nav_controller.dart';
 import 'package:ecommerce/features/common/ui/widgets/centered_circular_progress_indicator.dart';
@@ -10,7 +10,6 @@ import 'package:ecommerce/features/home/ui/widgets/app_bar_icon_button.dart';
 import 'package:ecommerce/features/common/ui/widgets/category_item_widget.dart';
 import 'package:ecommerce/features/home/ui/widgets/home_carousel_slider.dart';
 import 'package:ecommerce/features/home/ui/widgets/home_section_header.dart';
-import 'package:ecommerce/features/common/ui/widgets/product_list_shimmer_loading.dart';
 import 'package:ecommerce/features/home/ui/widgets/product_card_widget.dart';
 import 'package:ecommerce/features/home/ui/widgets/product_search_bar.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: _getProductList(controller.productList),
+                    children:  _getProductCardList([]),
                   ),
                 );
               }),
@@ -99,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: _getProductList([]), // Placeholder for empty list
+                  children: _getProductCardList([]), // Placeholder for empty list
                 ),
               ),
               const SizedBox(height: 16),
@@ -109,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: _getProductList([]), // Placeholder for empty list
+                  children: _getProductCardList([]), // Placeholder for empty list
                 ),
               ),
             ],
@@ -119,24 +118,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Helper method to generate category list widgets
-  List<Widget> _getCategoryList(List<CategoryModel> categoryModels) {
-    return categoryModels.map((category) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 16),
-        child: CategoryItemWidget(categoryModel: category),
-      );
-    }).toList();
+
+  List<Widget> _getCategoryList(List<CategoryItemModel> categoryModel){
+    List<Widget> categoryList = [];
+    for(int i=0; i<categoryModel.length; i++){
+      categoryList.add(CategoryItemWidget(categoryModel: categoryModel[i],));
+    }
+    return categoryList;
   }
 
-  // Helper method to generate product card widgets
-  List<Widget> _getProductList(List<ProductModel> productList) {
-    return productList.map((product) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 16),
-        child: ProductCardWidget(productModel: product),
-      );
-    }).toList();
+  List<Widget> _getProductCardList(List<ProductItemModel> productList){
+    List<Widget> productCardList = [];
+    for(int i=0; i<productList.length; i++){
+      productCardList.add(ProductCardWidget(productModel: productList[i],));
+    }
+    return productCardList;
   }
 
   // AppBar for the home screen
