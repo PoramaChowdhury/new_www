@@ -1,11 +1,9 @@
 import 'package:ecommerce/app/urls.dart';
-import 'package:ecommerce/features/common/data/models/product_list_model.dart';
-import 'package:ecommerce/features/common/data/models/product_model.dart';
 import 'package:ecommerce/features/common/data/models/product_pagination_model/product_pagination_model.dart';
 import 'package:ecommerce/services/network_caller/network_caller.dart';
 import 'package:get/get.dart';
 
-class PopularProductListController extends GetxController{
+class ProductListBySpecialController extends GetxController{
 
   bool _inProgress = false;
   bool get inProgress => _inProgress;
@@ -22,7 +20,7 @@ class PopularProductListController extends GetxController{
   final List<ProductItemModel> _productListModel = [];
   List<ProductItemModel> get productList => _productListModel;
 
-  Future<bool> getPopularProductList()async{
+  Future<bool> getSpecialProductList()async{
     _page++;
     if(_lastPage != null && _page > _lastPage!) return false;
 
@@ -40,6 +38,7 @@ class PopularProductListController extends GetxController{
         Urls.productListByRemarksList,
         queryParams: queryParams
     );
+
     if(response.isSuccess){
       isSuccess = true;
       _errorMessage = null;
@@ -58,11 +57,5 @@ class PopularProductListController extends GetxController{
     _inProgress = false;
     update();
     return isSuccess;
-  }
-  Future<bool> refreshCategoryList()async {
-    _page = 0;
-    _lastPage = null;
-    _productListModel.clear();
-    return getPopularProductList();
   }
 }

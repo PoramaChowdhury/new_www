@@ -40,8 +40,13 @@ class _HomeCarouselSliderState extends State<HomeCarouselSlider> {
                     color: AppColors.themeColor,
                     borderRadius: BorderRadius.circular(8),
                     image: DecorationImage(
-                        image: NetworkImage(banner.photoUrl ?? ''),
-                        fit: BoxFit.cover),
+                      image: NetworkImage(banner.photoUrl ?? ''),
+                      fit: BoxFit.cover,
+                      onError: (_, __) {
+                        // Handle the case when image fails to load
+                        print('Error loading image');
+                      },
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -50,20 +55,22 @@ class _HomeCarouselSliderState extends State<HomeCarouselSlider> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          banner.description ?? '',
+                          banner.description ?? 'No description available',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white, // Ensure text is readable on dark backgrounds
                           ),
                         ),
+                        const SizedBox(height: 8),
                         SizedBox(
                           width: 90,
                           child: ElevatedButton(
                             onPressed: () {},
                             child: const Text('Buy now'),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

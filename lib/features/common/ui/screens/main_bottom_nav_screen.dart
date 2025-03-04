@@ -31,7 +31,7 @@ class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
     super.initState();
     Get.find<SliderListController>().getSliders();
     Get.find<CategoryListController>().getCategoryList();
-    Get.find<PopularProductListController>().getProductList();
+    Get.find<PopularProductListController>().getPopularProductList();
   }
 
   @override
